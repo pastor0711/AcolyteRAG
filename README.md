@@ -18,8 +18,8 @@
 
 ```bash
 # Clone and install in editable mode
-git clone https://github.com/acolyteai/acolyterag.git
-cd acolyterag
+git clone https://github.com/pastor0711/AcolyteRAG.git
+cd AcolyteRAG
 pip install -e .
 ```
 
@@ -60,7 +60,7 @@ Multi-word phrases are also supported — registering `"best friend"` will match
 A local web app for managing concept groups and tuning scoring weights without touching code.
 
 ```bash
-python -m acolyterag.concept_manager
+python concept_manager.py
 # Opens http://localhost:7842
 ```
 
@@ -198,7 +198,7 @@ The final retrieval score blends relevance with message importance: `(1 - import
 | **Themes** | mental_state, psychology, health, past, future, communication, knowledge, morality, power, mystery |
 | **Genres** | fantasy, sci_fi, horror |
 
-See [`acolyterag/concepts.py`](acolyterag/concepts.py) for the full word lists.
+See [`concepts.py`](concepts.py) for the full word lists.
 
 ## Testing
 
@@ -207,7 +207,7 @@ See [`acolyterag/concepts.py`](acolyterag/concepts.py) for the full word lists.
 pytest
 
 # Run a quick smoke test
-python acolyterag/smoke_test.py
+python smoke_test.py
 ```
 
 The test suite includes ~97 tests covering retrieval accuracy, scoring mechanics, typo correction, concept manager HTTP API, file persistence with rollback, cache invalidation, and input validation.
