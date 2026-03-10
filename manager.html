@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="AcolyteRAG Concept Manager — manage concept groups and scoring dimensions for retrieval-augmented generation.">
+    <title>AcolyteRAG — Concept Manager</title>
+    <link rel="stylesheet" href="/manager.css">
+</head>
+
+<body>
+
+    
+    <div id="tab-bar">
+        <button class="tab-btn active" id="btn-concepts" onclick="switchTab('concepts')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+            </svg>
+            Concepts
+        </button>
+        <button class="tab-btn" id="btn-scoring" onclick="switchTab('scoring')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+            </svg>
+            Scoring
+            <span class="tab-badge" id="scoring-badge">0</span>
+        </button>
+    </div>
+
+    <div id="tab-wrap">
+
+        
+        <div id="tab-concepts">
+
+            <aside id="sidebar">
+                <div id="sidebar-top">
+                    <div class="logo-wrap">
+                        <h1>AcolyteRAG</h1>
+                        <p>Concept Manager</p>
+                    </div>
+                </div>
+                <div id="search-wrap">
+                    <span class="search-icon">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <circle cx="11" cy="11" r="8" />
+                            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                        </svg>
+                    </span>
+                    <input id="search" placeholder="Search groups…" autocomplete="off">
+                </div>
+                <div id="group-list"></div>
+                <button id="add-group-btn" title="Create a new concept group">＋ New group</button>
+            </aside>
+
+            <main id="main">
+                
+            </main>
+
+        </div>
+
+        
+        <div id="tab-scoring" style="display:none;">
+            <div id="scoring-panel">
+
+                
+                <div class="score-section">
+                    <div class="score-section-title">Narrative Scoring Dimensions</div>
+                    <div id="dim-list"></div>
+                    <button class="btn-add-concept" style="margin-top:8px;padding:8px 18px;" onclick="openAddDim()">＋
+                        Add Scoring Dimension</button>
+                </div>
+
+                
+                <div class="score-section">
+                    <div class="score-section-title">Blend Weights</div>
+                    <div id="blend-weights"></div>
+                </div>
+
+                
+                <div class="score-section">
+                    <div class="score-section-title">Live Preview</div>
+                    <div class="preview-grid">
+                        <textarea id="preview-query" placeholder="Query / new message…"></textarea>
+                        <textarea id="preview-candidate" placeholder="Candidate memory message…"></textarea>
+                    </div>
+                    <div id="preview-unsaved-note" class="preview-unsaved-note" aria-live="polite"></div>
+                    <div class="score-actions">
+                        <button class="btn-add" onclick="previewScore()">Compute Score</button>
+                        <div id="score-result-card">
+                            <div id="score-result">—</div>
+                            <div id="score-result-label">similarity score (0–1)</div>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div class="score-actions" style="padding-bottom:14px;">
+                    <button class="btn-add" onclick="saveScoring()">Save All</button>
+                    <button class="btn-ghost" onclick="loadScoring()">Reset</button>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    
+    <div id="toast"></div>
+
+    
+    <div id="modal-bg" class="modal-overlay">
+        <div class="modal-box">
+            <h2>New Concept Group</h2>
+            <div class="modal-field">
+                <label>Group name</label>
+                <input id="modal-name" placeholder="e.g. cooking" autocomplete="off">
+            </div>
+            <div class="modal-field">
+                <label>Initial words <span style="color:var(--muted);font-weight:400;">(comma-separated,
+                        optional)</span></label>
+                <input id="modal-words" placeholder="e.g. bake, roast, fry, simmer" autocomplete="off">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-ghost" id="modal-cancel">Cancel</button>
+                <button class="btn-add" id="modal-ok" style="padding:8px 22px;">Create</button>
+            </div>
+        </div>
+    </div>
+
+    
+    <div id="sdim-modal-bg" class="modal-overlay">
+        <div class="modal-box">
+            <h2>New Scoring Dimension</h2>
+            <div class="modal-field">
+                <label>Dimension name</label>
+                <input id="sdim-name" placeholder="e.g. tension" autocomplete="off">
+            </div>
+            <div class="modal-field">
+                <label>Initial concept groups <span style="color:var(--muted);font-weight:400;">(comma-separated,
+                        optional)</span></label>
+                <input id="sdim-concepts" placeholder="e.g. conflict, travel, love" autocomplete="off">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-ghost" onclick="closeAddDim()">Cancel</button>
+                <button class="btn-add" onclick="confirmAddDim()" style="padding:8px 22px;">Create</button>
+            </div>
+        </div>
+    </div>
+
+    
+    <div id="sconcept-modal-bg" class="modal-overlay">
+        <div class="modal-box">
+            <h2>Add Concept Groups to <span id="sconcept-dim-label" style="color:var(--accent);"></span></h2>
+            <div class="modal-field">
+                <label>Concept group IDs <span style="color:var(--muted);font-weight:400;">(comma-separated)</span></label>
+                <input id="sconcept-input" placeholder="e.g. conflict, travel, love" autocomplete="off">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-ghost" onclick="closeAddConcept()">Cancel</button>
+                <button class="btn-add" onclick="confirmAddConcept()" style="padding:8px 22px;">Add</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/manager.js"></script>
+</body>
+
+</html>

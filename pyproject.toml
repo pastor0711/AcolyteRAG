@@ -1,0 +1,7 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+cache_dir = ".venv/tmp-tests/.pytest_cache_local"
+norecursedirs = [".venv", ".python312", ".pytest_cache", ".pytest_tmp", "pytest-cache-files-*"]
