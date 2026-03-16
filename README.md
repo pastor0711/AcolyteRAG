@@ -219,3 +219,7 @@ MIT — see [LICENSE](LICENSE).
 ## Credits
 
 AcolyteRAG is the open-source core of [AcolyteAI](https://www.acolyteai.net).
+
+## AI Disclosure
+
+Please note that Artificial Intelligence (AI) was used in the development and generation of code within this repository.
